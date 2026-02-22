@@ -37,7 +37,7 @@ async fn health() -> &'static str {
 
 mod math;
 
-use chrono::{DateTime, Utc};
+use chrono::{Utc};
 use serde::{Deserialize, Serialize};
 use math::caffeine::{Dose, total_caffeine};
 
