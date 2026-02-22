@@ -5,7 +5,7 @@ use axum::{routing::post, Json};
 mod math;
 use chrono::{Utc, DateTime, Duration};
 use serde::{Deserialize, Serialize};
-use math::caffeine::{Dose, total_caffeine, predicted_crash};
+use math::caffeine::{Dose, total_caffeine, predicted_crash, sleep_score};
 
 #[tokio::main]
 async fn main() {
@@ -49,6 +49,7 @@ struct TimelineRequest {
 struct TimelineResponse {
     total_caffeine: f64, // how much caffeine is currently in the bloodstream
     crash_time: DateTime<Utc>, // when caffeine will drop to crash level (10mg)
+    sleep_score: f64, // predicted sleep quality score (0-100) based on caffeine at bedtime
 }
 
 async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse> {
@@ -56,9 +57,14 @@ async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse
 
     let now = Utc::now();
     let total = total_caffeine(&doses, now);
+    
+    print!("your total caffeine rn is {:.2} mg", total);
+    print!("your predicted crash is at {}", predicted_crash(&doses, now));
+    print!("your sleep score if you slept now is {:.2}", sleep_score(&doses, now));
 
     Json(TimelineResponse { 
         total_caffeine: total, 
         crash_time: predicted_crash(&doses, now),
+        sleep_score: sleep_score(&doses, now),
     })
 }
