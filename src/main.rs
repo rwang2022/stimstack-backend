@@ -2,6 +2,11 @@ use axum::{routing::get, Router};
 use tracing_subscriber;
 use axum::{routing::post, Json};
 
+mod math;
+use chrono::{Utc, DateTime, Duration};
+use serde::{Deserialize, Serialize};
+use math::caffeine::{Dose, total_caffeine, predicted_crash};
+
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
@@ -35,13 +40,6 @@ async fn health() -> &'static str {
     "StimStack backend is alive (lightning)"
 }
 
-mod math;
-
-use chrono::{Utc};
-use serde::{Deserialize, Serialize};
-use math::caffeine::{Dose, total_caffeine};
-
-
 #[derive(Deserialize)]
 struct TimelineRequest {
     doses: Vec<Dose>, // list of caffeine intakes
@@ -50,6 +48,7 @@ struct TimelineRequest {
 #[derive(Serialize)]
 struct TimelineResponse {
     total_caffeine: f64, // how much caffeine is currently in the bloodstream
+    crash_time: DateTime<Utc>, // when caffeine will drop to crash level (10mg)
 }
 
 async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse> {
@@ -60,5 +59,6 @@ async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse
 
     Json(TimelineResponse { 
         total_caffeine: total, 
+        crash_time: predicted_crash(&doses, now),
     })
 }
