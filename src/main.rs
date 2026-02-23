@@ -5,7 +5,8 @@ use axum::{routing::post, Json};
 mod math;
 use chrono::{Utc, DateTime, Duration};
 use serde::{Deserialize, Serialize};
-use math::caffeine::{Dose, total_caffeine, predicted_crash, sleep_score};
+use math::caffeine::{Dose, total_caffeine, predicted_crash};
+use math::sleep::sleep_score;
 
 #[tokio::main]
 async fn main() {
@@ -14,20 +15,6 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000")
         .await
         .unwrap();
-
-    println!("Server running on http://localhost:8000");
-
-    use chrono::Utc;
-    use math::caffeine::{Dose, total_caffeine};
-
-    // test caffeine calculation with some sample doses
-    let doses = vec![
-        Dose { mg: 200.0, time: Utc::now() - chrono::Duration::hours(2) }, //200mg 2 hours ago
-        Dose { mg: 160.0, time: Utc::now() - chrono::Duration::hours(6) }, 
-    ];
-
-    let current = total_caffeine(&doses, Utc::now()); // how much caffeine is currently in the bloodstream?
-    println!("Current caffeine level: {:.2} mg", current);
     
     let app = Router::new()
         .route("/health", get(health))
