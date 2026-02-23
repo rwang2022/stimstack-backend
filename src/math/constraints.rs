@@ -1,10 +1,13 @@
-struct Constraints {
-    max_daily_mg: f64,
-    min_gap_hours: f64,
-    no_caffeine_after: DateTime<Utc>,
+use chrono::{Utc, DateTime};
+use super::caffeine::{Dose};
+
+pub struct Constraints {
+    pub max_daily_mg: f64,
+    pub min_gap_hours: f64,
+    pub no_caffeine_after: DateTime<Utc>,
 }
 
-fn valid_schedule(schedule: &[Dose], constraints: &Constraints) -> bool {
+pub fn valid_schedule(schedule: &[Dose], constraints: &Constraints) -> bool {
     // max daily
     let total: f64 = schedule.iter().map(|d| d.mg).sum();
     if total > constraints.max_daily_mg {
@@ -26,4 +29,27 @@ fn valid_schedule(schedule: &[Dose], constraints: &Constraints) -> bool {
         }
     }
     true
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use chrono::{Utc, Duration};
+
+    #[test]
+    fn test_valid_schedule() {
+        let schedule = vec![
+            Dose { mg: 100.0, time: Utc::now() - Duration::hours(1) },
+            Dose { mg: 150.0, time: Utc::now() },
+            Dose { mg: 200.0, time: Utc::now() + Duration::hours(1) },
+        ];
+
+        let constraints = Constraints {
+            max_daily_mg: 400.0,
+            min_gap_hours: 2.0,
+            no_caffeine_after: Utc::now() + Duration::hours(12),
+        };
+
+        assert!(!valid_schedule(&schedule, &constraints));
+    }
 }

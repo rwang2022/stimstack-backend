@@ -1,12 +1,12 @@
-use axum::{routing::get, Router};
 use tracing_subscriber;
-use axum::{routing::post, Json};
+use axum::{routing::post, Router, Json};
 
 mod math;
 use chrono::{Utc, DateTime, Duration};
 use serde::{Deserialize, Serialize};
 use math::caffeine::{Dose, total_caffeine, predicted_crash};
 use math::sleep::sleep_score;
+use math::constraints::{Constraints, valid_schedule};
 
 #[tokio::main]
 async fn main() {
@@ -17,14 +17,9 @@ async fn main() {
         .unwrap();
     
     let app = Router::new()
-        .route("/health", get(health))
         .route("/timeline", post(timeline));
     
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn health() -> &'static str {
-    "StimStack backend is alive (lightning)"
 }
 
 #[derive(Deserialize)]
@@ -55,3 +50,20 @@ async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse
         sleep_score: sleep_score(&doses, now),
     })
 }
+
+fn test_constraints() {
+    let schedule = vec![
+        Dose { mg: 100.0, time: Utc::now() - Duration::hours(1) },
+        Dose { mg: 150.0, time: Utc::now() },
+        Dose { mg: 200.0, time: Utc::now() + Duration::hours(1) },
+    ];
+
+    let constraints = Constraints {
+        max_daily_mg: 400.0,
+        min_gap_hours: 2.0,
+        no_caffeine_after: Utc::now() + Duration::hours(12),
+    };
+
+    println!("Schedule valid? {}", valid_schedule(&schedule, &constraints)); // should be false due to min gap and max daily
+    assert!(!valid_schedule(&schedule, &constraints)); // exceeds max daily
+} 
