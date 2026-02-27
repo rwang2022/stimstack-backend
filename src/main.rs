@@ -19,7 +19,7 @@ async fn main() {
         .unwrap();
     
     let app = Router::new()
-        .route("/timeline", post(calculator));
+        .route("/calculator", post(calculator));
     
     axum::serve(listener, app).await.unwrap();
 }
@@ -42,7 +42,7 @@ async fn calculator(Json(payload): Json<CalculatorInputs>) -> Json<CalculatorOut
     let sensitivity = UserSensitivity::from_profile(&payload.profile);
 
     let total_caffeine = math::caffeine::total_caffeine(&payload.doses, Utc::now(), &sensitivity);
-    let predicted_crash = math::caffeine::predicted_crash(&payload.doses, Utc::now(), &sensitivity);
+    let predicted_crash = math::caffeine::predicted_crash(&payload.doses, &sensitivity);
     let predicted_sleep_score = math::sleep::predicted_sleep_score(&payload.doses, payload.sleep_time, &sensitivity);
 
     Json(CalculatorOutputs { 

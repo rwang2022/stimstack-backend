@@ -40,4 +40,5 @@ Explanation of Code Structure:
 ```bash
 $ cargo clean
 $ cargo watch -x run
+$ cargo test
 ```
