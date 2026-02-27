@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 // Module declarations - organize your app into logical sections
 pub mod math;      // Caffeine calculations
 pub mod model;     // Data structures
-pub mod engine;    // Constraint validation
 
 // Import what you need explicitly (easier to track dependencies)
 use math::*;

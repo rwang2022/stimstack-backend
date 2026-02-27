@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc, Duration};
 use crate::model::*;
 
+// helper function to model caffeine decay over time using an exponential decay function
 fn caffeine_decay(c0: f64, hours: f64) -> f64 {
     let k = (2.0_f64).ln() / 5.0; // default half-life 5 hours
     c0 * (-k * hours).exp()

@@ -6,6 +6,8 @@ This project uses
 - crash time prediction
 - sleep interference model 
 
+Explanation of Code Structure: 
+
 ## Up Next 
 - Intake schedule optimizer + constraint solver
     - suggest best times to take caffeine to maximize alertness, minimize crashes and poor sleep
