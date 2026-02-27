@@ -38,18 +38,9 @@ struct TimelineResponse {
 }
 
 async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse> {
-    let doses: Vec<Dose> = payload.doses;
-
-    let now = Utc::now();
-    let total = total_caffeine(&doses, now);
-    
-    print!("your total caffeine rn is {:.2} mg", total);
-    print!("your predicted crash is at {}", predicted_crash(&doses, now));
-    print!("your sleep score if you slept now is {:.2}", sleep_score(&doses, now));
-
     Json(TimelineResponse { 
-        total_caffeine: total, 
-        crash_time: predicted_crash(&doses, now),
-        sleep_score: sleep_score(&doses, now),
+        total_caffeine: 0.0,
+        crash_time: Utc::now(),
+        sleep_score: 0.0,
     })
 }
