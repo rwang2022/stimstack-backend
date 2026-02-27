@@ -1,12 +1,16 @@
-use tracing_subscriber;
+// use tracing_subscriber;
 use axum::{routing::post, Router, Json};
-
-mod math;
 use chrono::{Utc, DateTime, Duration};
 use serde::{Deserialize, Serialize};
-use math::caffeine::{Dose, total_caffeine, predicted_crash};
-use math::sleep::sleep_score;
-use math::constraints::{Constraints, valid_schedule};
+
+// Module declarations - organize your app into logical sections
+pub mod math;      // Caffeine calculations
+pub mod model;     // Data structures
+pub mod engine;    // Constraint validation
+
+// Import what you need explicitly (easier to track dependencies)
+use math::*;
+use model::Dose;
 
 #[tokio::main]
 async fn main() {
@@ -50,20 +54,3 @@ async fn timeline(Json(payload): Json<TimelineRequest>) -> Json<TimelineResponse
         sleep_score: sleep_score(&doses, now),
     })
 }
-
-fn test_constraints() {
-    let schedule = vec![
-        Dose { mg: 100.0, time: Utc::now() - Duration::hours(1) },
-        Dose { mg: 150.0, time: Utc::now() },
-        Dose { mg: 200.0, time: Utc::now() + Duration::hours(1) },
-    ];
-
-    let constraints = Constraints {
-        max_daily_mg: 400.0,
-        min_gap_hours: 2.0,
-        no_caffeine_after: Utc::now() + Duration::hours(12),
-    };
-
-    println!("Schedule valid? {}", valid_schedule(&schedule, &constraints)); // should be false due to min gap and max daily
-    assert!(!valid_schedule(&schedule, &constraints)); // exceeds max daily
-} 

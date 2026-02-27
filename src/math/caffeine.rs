@@ -1,10 +1,9 @@
 use chrono::{DateTime, Utc, Duration};
-use serde::{Deserialize, Serialize};
+use crate::model::*;
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Dose {
-    pub mg: f64,
-    pub time: DateTime<Utc>,
+fn caffeine_decay(c0: f64, hours: f64) -> f64 {
+    let k = (2.0_f64).ln() / 5.0; // default half-life 5 hours
+    c0 * (-k * hours).exp()
 }
 
 // Computes total caffeine in bloodstream at time t
@@ -37,7 +36,3 @@ pub fn predicted_crash(doses: &[Dose], now: DateTime<Utc>) -> DateTime<Utc> {
     now + Duration::seconds(secs)
 }
 
-fn caffeine_decay(c0: f64, hours: f64) -> f64 {
-    let k = (2.0_f64).ln() / 5.0; // default half-life 5 hours
-    c0 * (-k * hours).exp()
-}

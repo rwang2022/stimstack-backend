@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
-use super::caffeine::{Dose, total_caffeine};
+use crate::model::*;
+use super::caffeine::{total_caffeine};
 
 // Given a list of doses and a sleep time, predict a sleep quality score (0-100)
 // based on how much caffeine is in the system at bedtime
