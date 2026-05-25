@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn test_total_caffeine_decay() {
         use crate::math::caffeine::total_caffeine;
-        let t0 = Utc.ymd(2026,5,25).and_hms(8,0,0);
+        let t0 = Utc.with_ymd_and_hms(2026, 5, 25, 8, 0, 0).unwrap();
         let doses = vec![(t0, 100.0)];
         let mg_now = total_caffeine(&doses, t0, 5.0);
         assert!((mg_now - 100.0).abs() < 1e-6);
@@ -200,11 +200,10 @@ mod tests {
 
     #[test]
     fn test_optimizer_basic() {
-        use chrono::TimeZone;
-        let start = Utc.ymd(2026,5,25).and_hms(9,0,0);
-        let end = Utc.ymd(2026,5,25).and_hms(17,0,0);
-        let sleep = Utc.ymd(2026,5,25).and_hms(23,0,0);
-        let constraints = Constraints { max_daily_mg: 400.0, min_gap_hours: 4.0, no_caffeine_after: Utc.ymd(2026,5,25).and_hms(20,0,0) };
+        let start = Utc.with_ymd_and_hms(2026, 5, 25, 9, 0, 0).unwrap();
+        let end = Utc.with_ymd_and_hms(2026, 5, 25, 17, 0, 0).unwrap();
+        let sleep = Utc.with_ymd_and_hms(2026, 5, 25, 23, 0, 0).unwrap();
+        let constraints = Constraints { max_daily_mg: 400.0, min_gap_hours: 4.0, no_caffeine_after: Utc.with_ymd_and_hms(2026, 5, 25, 20, 0, 0).unwrap() };
         let input = OptimizerInput {
             half_life_hours: 5.0,
             constraints: constraints.clone(),
