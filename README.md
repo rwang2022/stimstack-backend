@@ -24,12 +24,12 @@ This app takes user caffeine constraints and dose sizes, then computes the best 
 ```mermaid
 flowchart TB
     Client[Client / Frontend]
-    A[Axum HTTP Layer]\n(routes, handlers, JSON I/O)
+    A["Axum HTTP Layer<br/>(routes, handlers, JSON I/O)"]
     O[Optimizer]
-    C[caffeine.rs]\n(decay + crash prediction)
-    S[sleep.rs]\n(sleep interference score)
-    T[optimizer.rs]\n(alertness scoring + candidate search)
-    R[OptimizerOutput]\n(recommendations + curve + sleep score)
+    C["caffeine.rs<br/>(decay + crash prediction)"]
+    S["sleep.rs<br/>(sleep interference score)"]
+    T["optimizer.rs<br/>(alertness scoring + candidate search)"]
+    R["OptimizerOutput<br/>(recommendations + curve + sleep score)"]
 
     Client --> A
     A --> O
