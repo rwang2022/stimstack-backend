@@ -230,7 +230,10 @@ mod tests {
         // 500 mg dose taken 1 minute before sleep → almost all still in system
         let t0 = Utc.with_ymd_and_hms(2026, 5, 25, 22, 59, 0).unwrap();
         let sleep = Utc.with_ymd_and_hms(2026, 5, 25, 23, 0, 0).unwrap();
-        let score = predicted_sleep_score(&[(t0, 500.0)], sleep, 5.0);
+        
+        let doses = vec![(t0, 500.0)];
+        let score = predicted_sleep_score(&doses, sleep, 5.0);
+
         assert!(score < 10.0, "expected near-zero sleep score, got {score}");
     }
 
